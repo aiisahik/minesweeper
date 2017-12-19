@@ -58,7 +58,7 @@ class GameView extends Component {
             <div className="game-container">
                 <div className="game">
                     <div className="header">
-                        <div className="counts">{this.state.board.numUnflaggedMines}</div>
+                        <div className="counts">{this.state.board.numPossiblyRemainingMines}</div>
 
                         <div className={classNames("face", {
                                 "smile": !this.state.board.hasLost,
@@ -75,6 +75,8 @@ class GameView extends Component {
                         board={this.state.board}
                         onSquareClick={this.onSquareClick}
                     />
+                    {this.state.board.hasWon && (<div className="game-won"> You Won! </div>)}
+                    {this.state.board.hasLost && (<div className="game-lost"> You Lost! </div>)}
                 </div>
                 <div className="game-select">
                     <button type="button" onClick={(e) => this.newGame('easy')}>Easy</button>
