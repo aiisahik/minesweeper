@@ -41,6 +41,7 @@ export default class Board {
         this.checkWon = this.checkWon.bind(this);
         this.gameOver = this.gameOver.bind(this);
         this.createBoard = this.createBoard.bind(this);
+        this.getPotentialMineSquare = this.getPotentialMineSquare.bind(this);
         /* run main board creation function */
         this.createBoard(DIFFICULTIES[difficulty])
         return this;
@@ -54,17 +55,26 @@ export default class Board {
         });
         /* plant the mines */
         this.mines = range(settings.numMines).map((i) => {
-            const minex = Math.floor(Math.random() * settings.sizex);
-            const miney = Math.floor(Math.random() * settings.sizey);
-            const mineSquare = this.data[minex][miney];
+            const mineSquare = this.getPotentialMineSquare(settings);
             mineSquare.setMine();
             /* notify each of the surrounding squares of the mine */
-            const mineSideSquares = this.getSideSquares(minex, miney);
+            const mineSideSquares = this.getSideSquares(mineSquare.data.x, mineSquare.data.y);
             mineSideSquares.forEach((mineSideSquare)=> {
                 mineSideSquare.setSideMine(mineSquare);
             });
             return mineSquare;
         });
+    }
+    getPotentialMineSquare(settings){
+        const minex = Math.floor(Math.random() * settings.sizex);
+        const miney = Math.floor(Math.random() * settings.sizey);
+        const mineSquare = this.data[minex][miney];
+        if (mineSquare.data.isMine){
+            /* oops we randomly picked a mine. Let's recursively try again */
+            return this.getPotentialMineSquare(settings);
+        } else {
+            return mineSquare;
+        }
     }
     getSideSquares(x,y){
         /* get all adjcent squares as array */
